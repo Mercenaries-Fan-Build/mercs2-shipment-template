@@ -1,0 +1,38 @@
+# A Shipment manifest. This one replaces Mattias's skin texture.
+#
+# Rename things, drop your own PNG into src/, and you have a mod. Everything below is checked by
+# `qm lint`, which needs no game install — so CI catches mistakes before you ever launch the game.
+
+format: 1
+
+shipment:
+  # Lowercase, dashes, no spaces. This becomes the built WAD's filename.
+  name: my-shipment
+  version: 1.0.0
+  # `retail` is the shipped game. The other value is `reimpl`, for the fan-build engine.
+  target: retail
+  authors:
+    - your-name-here
+  description: Replaces Mattias's skin with a custom one.
+
+contributions:
+  - kind: replace_texture
+    # The texture's NAME, not its hash.
+    #
+    # The engine looks assets up by a one-way hash, so a hash cannot be turned back into a name —
+    # which means a manifest full of hashes is unreadable and unreviewable. Write the name and let
+    # the Quartermaster hash it. `qm lint` will tell you if you write a bare hash where a name is
+    # known.
+    #
+    # `pmc_hum_mattias_v3_ub` is a good first target because it is FULLY RESIDENT: the whole mip
+    # chain lives in one block. Many world textures instead stream their finer mips from separate
+    # blocks, and replacing one of those with a single resident block stops it streaming. `qm build`
+    # warns (M0007) when you pick one of those.
+    target: pmc_hum_mattias_v3_ub
+
+    # Your replacement image, relative to the Shipment root. It must live under src/.
+    #
+    # Dimensions must match the texture you are replacing — 512x512 here. A replacement is
+    # same-hash and fully resident, so a mismatch is a hard error rather than something the
+    # builder can quietly rescale.
+    image: src/skin.png
