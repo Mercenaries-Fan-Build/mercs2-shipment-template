@@ -48,14 +48,41 @@ jobs:
           echo "qm $QM_VERSION verified: $got"
           chmod +x qm
 
-      # Hermetic: no game install, no retail WADs, no network. That is the whole reason this can run
-      # on a public runner at all — the rules that need the game are a separate set, and `qm build`
-      # is where they run.
+      # Hermetic: no game install, no retail WADs, no network beyond fetching qm. That is what lets
+      # this run on a public runner at all — the rules needing the game are a separate set that runs
+      # during `qm build`.
       #
-      # Gated on the EXIT CODE, not on what gets printed. Findings at `error` or above fail the job;
-      # warnings are shown and do not.
-      - name: qm lint
+      # Gated on the EXIT CODE, not on what gets printed.
+      - name: Lint this Shipment
         run: ./qm lint .
+
+      # Every example must lint clean too, or the teaching material rots the first time a rule
+      # changes and nobody notices.
+      - name: Lint the examples that should pass
+        run: |
+          set -euo pipefail
+          for d in examples/01-* examples/02-* examples/03-* \
+                   examples/04-*/alpha examples/04-*/beta \
+                   examples/05-*/unmergeable-script; do
+            echo "── $d"
+            ./qm lint "$d"
+          done
+
+      # The counterpart, and the one that actually keeps the others honest: these examples exist to
+      # DEMONSTRATE failures, so a clean exit means the rule they teach has stopped firing. Without
+      # this the pass-only checks above would still be green with the whole linter disabled.
+      - name: The failing examples must actually fail
+        run: |
+          set -uo pipefail
+          rc=0
+          for d in examples/05-*/missing-file examples/05-*/two-claims-one-target; do
+            echo "── $d (expected to fail)"
+            if ./qm lint "$d"; then
+              echo "::error::$d was expected to fail lint but passed — the rule it demonstrates is no longer firing"
+              rc=1
+            fi
+          done
+          exit $rc
 
       - name: What was checked
         if: always()

@@ -1,82 +1,140 @@
 # Mercenaries 2 Shipment template
 
-A starting point for a Mercenaries 2 mod. Click **Use this template**, edit `manifest.yaml`, drop
-your files in `src/`, and push — CI checks it on every commit.
+A starting point for a Mercenaries 2 mod — and a worked explanation of how modding this game
+actually functions.
 
-The example that ships here replaces Mattias's skin. It builds and loads as-is, so you can confirm
-your setup works before changing anything.
+The Shipment at the root builds and loads as-is. It does the two things every mod does: it
+**overwrites** existing content (Mattias's skin) and **adds** new content (an outfit). Change one
+field at a time and re-run `qm lint .`.
 
-## Why the checks matter
+[`examples/`](examples) has a runnable Shipment for each capability, including ones that fail on
+purpose.
 
-Mercenaries 2 does not report asset errors. It hangs on a loading screen.
+## Why any of this exists
+
+**Mercenaries 2 does not report asset errors. It hangs on a loading screen.**
 
 Declare one page too few for a texture and the engine overruns its heap. Point a LOD row at a block
 that is not in your WAD and the streamer sizes a buffer from a garbage index and asks the OS for
-something on the order of 549 GB. Neither gives you a message, a log line, or a crash — just a
-frozen screen.
+roughly 549 GB. Get a wardrobe count wrong and your outfit is in the WAD, in the table, and
+unreachable.
 
-`qm lint` knows about those traps. Run it before you launch the game, and CI runs it for you on
-every push.
+None of those produce a message, a log line, or a crash dump. `qm lint` knows about them, so you
+find out in a second rather than after an hour of bisecting a WAD.
 
-## Layout
-
-```
-manifest.yaml     what your mod contributes
-src/              your files — textures, models, scripts
-build/            output; gitignored, never commit it
-```
-
-## Working on it locally
+## Get started
 
 Grab `qm` from the [tools release page][releases] — there is nothing to compile.
 
 ```sh
-qm lint .                       # check it; no game install needed
-qm build . --out build          # produce the overlay WAD
+qm lint .                        # check it; no game install needed
+qm build . --out build           # produce the overlay WAD
+qm rules                         # everything that gets checked
 ```
 
-`qm build` needs the game. It finds an install automatically; pass `--game <dir>` if yours is
-somewhere unusual, and `qm rules` lists everything that gets checked.
+`qm build` needs the game and finds it automatically; pass `--game <dir>` if yours is somewhere
+unusual. Install the result with [Modkit][modkit], which also keeps `qm` updated.
 
-Install the built WAD with [Modkit][modkit], which also keeps `qm` up to date.
+### Building anything with Lua
 
-### If a check fires
+`qm build` needs `--corpus`, the decompiled game scripts your append is added to. Download
+`mercs2-workshop-data.zip` from the same release page, unzip it, and point at `workshop_data/lua`:
 
-Every finding carries a code and a doc link:
-
+```sh
+qm build . --out build --corpus path/to/workshop_data/lua
 ```
-[M0007] warning: pmc_hum_example is a STREAMED texture whose row names 3 finer rung(s)…
-```
 
-`warning` means "we think you should know"; `error` and `HANG` stop the build. `HANG` is the class
-that would freeze the game with no explanation — those are never advisory.
+The root Shipment here needs it, because `add_outfit` writes a wardrobe entry.
 
-## What you can put in a manifest
+## How a mod reaches the game
 
-| kind | what it does |
+Your Shipment builds into **one overlay WAD**. The game mounts it after its own, and the last mount
+wins — so the base files are never modified and uninstalling is deleting a file.
+
+That is the simple half. The rest of the format exists because the engine does **not** resolve
+everything that way:
+
+| subsystem | who wins |
 |---|---|
-| `replace_texture` | swap a texture for your own PNG |
-| `add_model` | add new geometry |
-| `add_outfit` | add a wearable outfit for a hero |
-| `patch_lua` | append to a game script |
+| WAD stack | last mounted |
+| runtime chunk registry | **first** writer |
+| string databases | last registered, capped at 8 |
+| ASI plugins | nothing arbitrates at all |
 
-`qm rules` and the [format reference][format] cover the details, including the fields each kind
-takes.
+Four subsystems, four different answers, running simultaneously. "Just set your load order" is not a
+strategy that can work against that, which is why a Shipment declares *what it touches* and lets the
+Quartermaster resolve conflicts before anything is built.
 
-## Mods that coexist
+## What you can contribute
 
-Two mods editing the same thing usually means one silently wins. The manifest is how you avoid that:
-it declares what your Shipment touches, so conflicts get detected instead of discovered.
+| kind | does | status |
+|---|---|---|
+| `replace_texture` | overwrite an existing texture | builds |
+| `add_model` | add new geometry | builds |
+| `add_outfit` | add a wearable outfit (geometry + wardrobe entry) | builds |
+| `patch_lua` | append to a game script | builds |
+| `edit_state_machine` | rewrite an animation state machine | not lowered yet |
+| `native_hook` | ship an ASI plugin | not lowered yet |
+| `raw` | opaque bytes plus a declared blast radius | not lowered yet |
 
-Lua is the case worth understanding. Scripts load as one block rather than individually, so two mods
-that both edit scripts cannot each ship their own copy — the last one installed would erase the
-other. `qm link` composes every installed Shipment's changes into a single WAD, which is why you
-declare an *append* rather than shipping a whole modified script.
+The last three parse, lint, and then fail with the reason. They are not silently skipped — a dropped
+contribution would produce a WAD that looks fine and does nothing.
+
+## The part that bites: Lua
+
+Scripts do not load individually. All 114 live in a single block, so editing one means re-emitting
+all of them — and if two mods each shipped their own copy of that block, the last one installed
+would erase the other's Lua with no error anywhere.
+
+So you ship an **append**, not a script, and `qm link` composes every installed Shipment's appends
+onto one base and compiles once. [`examples/04-two-mods-coexisting`](examples/04-two-mods-coexisting)
+demonstrates it.
+
+Only scripts whose composition has been reverse-engineered can merge. For anything else the
+Quartermaster **fails closed**: your Shipment still builds, but it is marked exclusive and refuses to
+co-install with another mod touching that script. Refusing to install is visible and recoverable;
+two mods silently erasing each other is not.
+
+## Reading the output
+
+```
+[M0110] error: contributions[0]: (replace_texture) field `image`: src/skin.png does not exist
+  — see https://…/manifest_format.md#folder-layout
+```
+
+Every finding has a code and a link explaining the trap.
+
+| severity | effect |
+|---|---|
+| `info` / `warning` | printed; the build continues |
+| `error` | the build fails |
+| `HANG` | the build fails — this class freezes the game with no message |
+
+Builds are gated on the **exit code**, never on a printed count, so a script that discards output
+still cannot ship a broken Shipment. Exit `1` means findings; exit `2` means `qm` could not run at
+all (no manifest, no game install) — CI needs to tell those apart.
+
+`qm rules` also lists rules that are known but **not yet implemented**. Those are shown deliberately:
+a linter that silently omits its most dangerous checks reads as a clean bill of health.
+
+## Layout
+
+```
+manifest.yaml     what this Shipment contributes
+src/              your files — textures, models, Lua
+examples/         runnable examples; delete if you don't want them
+build/            qm output; gitignored, never commit it
+```
+
+Every path in the manifest resolves under `src/`. A path escaping the root — via `..` or a symlink —
+is refused, because a Shipment has to mean the same thing on someone else's machine as on yours.
+
+The full field reference is in [manifest_format.md][format].
 
 ## License
 
-The template is MIT. Your mod is yours — replace this section with whatever you like.
+The template is MIT. Your mod is yours — replace this section.
 
 [releases]: https://github.com/Mercenaries-Fan-Build/mercs2-wad-simulator/releases
-[modkit]: https://github.com/Mercenaries-Fan-Build
-[format]: https://github.com/Mercenaries-Fan-Build/notes-on-the-released-game
+[modkit]: https://github.com/Mercenaries-Fan-Build/mercs2-modkit
+[format]: https://github.com/Mercenaries-Fan-Build/notes-on-the-released-game/blob/main/docs/modding/manifest_format.md

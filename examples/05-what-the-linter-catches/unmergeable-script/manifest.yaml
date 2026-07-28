@@ -1,0 +1,14 @@
+# WARNS ON PURPOSE — M0141. Still exit 0: this builds, it just costs you compatibility.
+#
+# Only scripts whose composition has been reversed can be merged. For anything else the Quartermaster
+# FAILS CLOSED and marks the claim exclusive, so your Shipment refuses to install alongside another
+# that patches the same script.
+#
+# That is the deliberate trade: refusing to co-install is recoverable and visible. Two mods silently
+# annihilating each other's Lua is neither.
+format: 1
+shipment: { name: unmergeable-script, version: 1.0.0, target: retail }
+contributions:
+  - kind: patch_lua
+    target: mrxhq
+    append: src/append.lua
