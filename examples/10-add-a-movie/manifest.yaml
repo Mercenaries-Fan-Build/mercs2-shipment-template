@@ -1,0 +1,37 @@
+# ADDING A UI MOVIE — Scaleform GFx.
+#
+# The game's interface is Scaleform: the minimap, the shell menu, the pause screen and ~60 others are
+# `.gfx` movies (AVM1/AS2, 2006-era Flash) that Lua drives through `SetSwfFile` and event handlers.
+#
+# This ADDS one under a new name. It overrides nothing — a new asset hash that did not exist before,
+# so it cannot collide with a shipped movie or with another mod's. Your Lua then loads it by name.
+#
+# Build:  qm build . --out build
+#
+# ⚠ This is the only Data kind that needs no game install: a movie is self-contained — there is no
+# donor to borrow a rig from and no target whose dimensions it must match. So unlike the texture and
+# model examples, this one builds anywhere, including CI.
+format: 1
+shipment:
+  name: add-a-movie
+  version: 1.0.0
+  target: retail
+  description: Adds a Scaleform GFx movie as a new UI asset.
+
+contributions:
+  - kind: add_movie
+    # The asset identity. Hashed, and what `SetSwfFile("my_hud_widgets")` resolves against. Pick a
+    # name no shipped movie uses — `topbar`, `garage`, `pause_menu`, `minimap` and `shell` are all
+    # taken, and reusing one would shadow the game's own UI.
+    name: my_hud_widgets
+
+    # The movie itself, injected VERBATIM — nothing is re-encoded.
+    #
+    # Retail ships 61 compressed `CFX` movies and 3 uncompressed `GFX`, so both forms load and there
+    # is no encoding to normalise to. src/hud.gfx here is uncompressed GFX v8, authored with
+    # gfxforge (https://github.com/loganw234/mercs2-tools-gfxforge-web) rather than Adobe tooling.
+    #
+    # `qm` parses the movie before injecting it and refuses one carrying AS3 bytecode (M0190): the
+    # engine's GFx 2.x runtime is AVM1-only, so a `DoABC` tag is skipped as unknown — the movie
+    # loads, renders, and none of its logic ever runs, with nothing logged.
+    movie: src/hud.gfx

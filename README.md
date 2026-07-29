@@ -78,16 +78,18 @@ Quartermaster resolve conflicts before anything is built.
 | `add_outfit` | add a wearable outfit (geometry + wardrobe entry) | [03](examples/03-add-an-outfit) |
 | `patch_lua` | append to a game script | [04](examples/04-bundle-lua) |
 | `native_hook` | ship an ASI plugin into the game folder | [06](examples/06-ship-a-plugin) |
+| `place_file` | place a companion file (config, script) beside it | [06](examples/06-ship-a-plugin) |
+| `add_movie` | add a Scaleform GFx UI movie | [10](examples/10-add-a-movie) |
 | `raw` | opaque bytes plus a declared blast radius | [07](examples/07-raw-bytes) |
 | `edit_state_machine` | rewrite a destruction state machine | [08](examples/08-not-supported-yet) — **refused** |
 
-Six of the seven build. `edit_state_machine` lints but refuses to build, and says exactly why: the
+Eight of the nine build. `edit_state_machine` lints but refuses to build, and says exactly why: the
 chunk family can be read but not written, and `states:` has no schema yet. It is left refusing rather
 than half-implemented, because a dropped or guessed contribution produces a WAD that looks correct
 and does nothing — which the game will never tell you about. Ship a hand-built block through `raw`
 in the meantime.
 
-`raw` and `native_hook` need `qm` v0.10.2 or later.
+`raw` and `native_hook` need `qm` v0.10.2 or later; `add_movie` and `place_file` need v0.10.3.
 
 ## The part that bites: Lua
 

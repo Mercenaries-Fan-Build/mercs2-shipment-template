@@ -43,3 +43,23 @@ contributions:
     # because plugin discovery is filesystem order across four directories — there is no ordering
     # that resolves it.
     touches: ["0x004CF340"]
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # The plugin's config file.
+  # ─────────────────────────────────────────────────────────────────────────────
+  #
+  # `native_hook` ships the .asi and nothing else, so every companion needs its own contribution.
+  # That is not a nicety: a plugin whose .ini cannot ship is a plugin nobody can configure, and every
+  # real ASI mod pairs the two. The loader looks for a plugin's config BESIDE the loaded module —
+  # same directory, nowhere else — so both contributions name the same destination.
+  #
+  # `dest` is a NAME from a fixed set, never a path: game_root, scripts, plugins, update, on_boot,
+  # on_load, on_key. A path cannot be written here at all, which is what keeps the game executable
+  # and vz.wad unreachable by construction rather than by validation. The filename comes from the
+  # source file and cannot be renamed on the way out.
+  #
+  # Claims are EXCLUSIVE on the full destination path: two Shipments writing scripts/x.ini is a hard
+  # error, because loose files have no arbitration layer and the loser's config would simply vanish.
+  - kind: place_file
+    file: src/example-plugin.ini
+    dest: scripts

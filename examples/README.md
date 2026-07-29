@@ -16,12 +16,14 @@ so this material cannot quietly drift behind the format.
 | [03-add-an-outfit](03-add-an-outfit) | `add_outfit` | the composed kind — geometry + wardrobe | yes |
 | [04-bundle-lua](04-bundle-lua) | `patch_lua` | shipping Lua as an append | yes |
 | [05-two-mods-coexisting](05-two-mods-coexisting) | `patch_lua` ×2 | two mods on one script, both surviving | via `qm link` |
-| [06-ship-a-plugin](06-ship-a-plugin) | `native_hook` | native code, and file placement | yes |
+| [06-ship-a-plugin](06-ship-a-plugin) | `native_hook` + `place_file` | native code, and its config file | yes |
 | [07-raw-bytes](07-raw-bytes) | `raw` | shipping bytes with a declared blast radius | yes |
 | [08-not-supported-yet](08-not-supported-yet) | `edit_state_machine` | lint ≠ build | **no, on purpose** |
+| [10-add-a-movie](10-add-a-movie) | `add_movie` | adding a Scaleform UI movie | yes |
 | [09-what-the-linter-catches](09-what-the-linter-catches) | — | the failures, on purpose | fails lint |
 
-All nine build with the pinned `qm`; `raw` and `native_hook` need v0.10.2 or later.
+All of these work with the pinned `qm`. `raw` and `native_hook` need v0.10.2 or later; `add_movie`
+and `place_file` need v0.10.3.
 
 ## The two halves
 
