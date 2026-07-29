@@ -35,9 +35,9 @@ qm rules                         # everything that gets checked
 `qm build` needs the game and finds it automatically; pass `--game <dir>` if yours is somewhere
 unusual. Install the WAD it produces with [Modkit][modkit].
 
-Download `qm` yourself for now — pick the asset for your platform (`qm-windows-x86_64.exe`,
-`qm-linux-x86_64`, `qm-macos-arm64`, `qm-macos-x86_64`) and put it somewhere on your `PATH`. Modkit
-manages the other tools but does not yet know about this one.
+Modkit installs and updates `qm` for you, and builds through it. To grab it by hand instead, take
+the asset for your platform from the release page — `qm-windows-x86_64.exe`, `qm-linux-x86_64`,
+`qm-macos-arm64`, `qm-linux-arm64`, … — and put it on your `PATH`.
 
 ### Building anything with Lua
 
@@ -87,7 +87,7 @@ than half-implemented, because a dropped or guessed contribution produces a WAD 
 and does nothing — which the game will never tell you about. Ship a hand-built block through `raw`
 in the meantime.
 
-`raw` and `native_hook` need a `qm` newer than v0.10.1.
+`raw` and `native_hook` need `qm` v0.10.2 or later.
 
 ## The part that bites: Lua
 

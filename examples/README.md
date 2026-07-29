@@ -21,7 +21,7 @@ so this material cannot quietly drift behind the format.
 | [08-not-supported-yet](08-not-supported-yet) | `edit_state_machine` | lint ≠ build | **no, on purpose** |
 | [09-what-the-linter-catches](09-what-the-linter-catches) | — | the failures, on purpose | fails lint |
 
-`raw` and `native_hook` need a `qm` newer than **v0.10.1**; everything else works with any release.
+All nine build with the pinned `qm`; `raw` and `native_hook` need v0.10.2 or later.
 
 ## The two halves
 
