@@ -6,9 +6,14 @@
 #
 # That is the deliberate trade: refusing to co-install is recoverable and visible. Two mods silently
 # annihilating each other's Lua is neither.
+#
+# ⚠ Note the target is a `vz` script. Game scripts live in several blocks — `vz`, `resident`, `shell`
+# — and `patch_lua` targets the `vz` one. Naming a script from another block (`mrxhq`, say) lints
+# clean and then fails the build with "not in this scripts block", which is a different problem from
+# the one this example is about.
 format: 1
 shipment: { name: unmergeable-script, version: 1.0.0, target: retail }
 contributions:
   - kind: patch_lua
-    target: mrxhq
+    target: wifmissionflow
     append: src/append.lua
