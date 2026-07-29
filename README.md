@@ -33,7 +33,11 @@ qm rules                         # everything that gets checked
 ```
 
 `qm build` needs the game and finds it automatically; pass `--game <dir>` if yours is somewhere
-unusual. Install the result with [Modkit][modkit], which also keeps `qm` updated.
+unusual. Install the WAD it produces with [Modkit][modkit].
+
+Download `qm` yourself for now — pick the asset for your platform (`qm-windows-x86_64.exe`,
+`qm-linux-x86_64`, `qm-macos-arm64`, `qm-macos-x86_64`) and put it somewhere on your `PATH`. Modkit
+manages the other tools but does not yet know about this one.
 
 ### Building anything with Lua
 
