@@ -58,12 +58,16 @@ jobs:
 
       # Every example must lint clean too, or the teaching material rots the first time a rule
       # changes and nobody notices.
+      #
+      # 08 is in this list deliberately. `edit_state_machine` LINTS clean and fails only at build —
+      # that gap is the lesson it teaches, so a lint failure there would mean something else broke.
       - name: Lint the examples that should pass
         run: |
           set -euo pipefail
-          for d in examples/01-* examples/02-* examples/03-* \
-                   examples/04-*/alpha examples/04-*/beta \
-                   examples/05-*/unmergeable-script; do
+          for d in examples/01-* examples/02-* examples/03-* examples/04-* \
+                   examples/05-*/alpha examples/05-*/beta \
+                   examples/06-* examples/07-* examples/08-* \
+                   examples/09-*/unmergeable-script; do
             echo "── $d"
             ./qm lint "$d"
           done
@@ -75,7 +79,7 @@ jobs:
         run: |
           set -uo pipefail
           rc=0
-          for d in examples/05-*/missing-file examples/05-*/two-claims-one-target; do
+          for d in examples/09-*/missing-file examples/09-*/two-claims-one-target; do
             echo "── $d (expected to fail)"
             if ./qm lint "$d"; then
               echo "::error::$d was expected to fail lint but passed — the rule it demonstrates is no longer firing"
@@ -83,6 +87,22 @@ jobs:
             fi
           done
           exit $rc
+
+      # Every kind in the format must be demonstrated by an example. Without this the examples drift
+      # behind the format silently — a new kind lands, nothing here fails, and the teaching material
+      # quietly stops being complete.
+      - name: Every contribution kind is covered
+        run: |
+          set -euo pipefail
+          missing=""
+          for kind in replace_texture add_model add_outfit patch_lua native_hook raw edit_state_machine; do
+            grep -rqs "kind: $kind" manifest.yaml examples/ || missing="$missing $kind"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::no example demonstrates:$missing"
+            exit 1
+          fi
+          echo "all seven kinds are demonstrated"
 
       - name: What was checked
         if: always()

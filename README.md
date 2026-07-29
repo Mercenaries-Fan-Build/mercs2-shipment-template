@@ -67,18 +67,23 @@ Quartermaster resolve conflicts before anything is built.
 
 ## What you can contribute
 
-| kind | does | status |
+| kind | does | example |
 |---|---|---|
-| `replace_texture` | overwrite an existing texture | builds |
-| `add_model` | add new geometry | builds |
-| `add_outfit` | add a wearable outfit (geometry + wardrobe entry) | builds |
-| `patch_lua` | append to a game script | builds |
-| `edit_state_machine` | rewrite an animation state machine | not lowered yet |
-| `native_hook` | ship an ASI plugin | not lowered yet |
-| `raw` | opaque bytes plus a declared blast radius | not lowered yet |
+| `replace_texture` | overwrite an existing texture | [01](examples/01-overwrite-a-texture) |
+| `add_model` | add new geometry | [02](examples/02-add-a-model) |
+| `add_outfit` | add a wearable outfit (geometry + wardrobe entry) | [03](examples/03-add-an-outfit) |
+| `patch_lua` | append to a game script | [04](examples/04-bundle-lua) |
+| `native_hook` | ship an ASI plugin into the game folder | [06](examples/06-ship-a-plugin) |
+| `raw` | opaque bytes plus a declared blast radius | [07](examples/07-raw-bytes) |
+| `edit_state_machine` | rewrite a destruction state machine | [08](examples/08-not-supported-yet) — **refused** |
 
-The last three parse, lint, and then fail with the reason. They are not silently skipped — a dropped
-contribution would produce a WAD that looks fine and does nothing.
+Six of the seven build. `edit_state_machine` lints but refuses to build, and says exactly why: the
+chunk family can be read but not written, and `states:` has no schema yet. It is left refusing rather
+than half-implemented, because a dropped or guessed contribution produces a WAD that looks correct
+and does nothing — which the game will never tell you about. Ship a hand-built block through `raw`
+in the meantime.
+
+`raw` and `native_hook` need a `qm` newer than v0.10.1.
 
 ## The part that bites: Lua
 
@@ -87,7 +92,7 @@ all of them — and if two mods each shipped their own copy of that block, the l
 would erase the other's Lua with no error anywhere.
 
 So you ship an **append**, not a script, and `qm link` composes every installed Shipment's appends
-onto one base and compiles once. [`examples/04-two-mods-coexisting`](examples/04-two-mods-coexisting)
+onto one base and compiles once. [`examples/05-two-mods-coexisting`](examples/05-two-mods-coexisting)
 demonstrates it.
 
 Only scripts whose composition has been reverse-engineered can merge. For anything else the
