@@ -15,7 +15,7 @@ shipment:
   # Lowercase, dashes, <= 64 chars. Becomes build/<name>.wad, and is how other Shipments refer to
   # yours in `load.requires` / `load.conflicts`.
   name: my-shipment
-  version: 1.0.0
+  version: 0.0.2
 
   # `retail` is the shipped game; `reimpl` is the fan-build engine. There is no value meaning
   # "both" — the layers differ (ASI plugins exist only on retail), so a Shipment claiming both has
