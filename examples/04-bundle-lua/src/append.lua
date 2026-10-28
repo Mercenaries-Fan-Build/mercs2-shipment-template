@@ -2,6 +2,6 @@
 --
 -- Everything the base script defines is in scope here, so you can read its globals and add to its
 -- tables. You are extending the script, not replacing it — which is what lets other mods extend it
--- too (see ../04-two-mods-coexisting).
+-- too (see ../05-two-mods-coexisting).
 
 Debug.Printf("[bundle-lua] this Shipment's Lua ran\n")

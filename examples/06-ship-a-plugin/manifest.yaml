@@ -13,11 +13,11 @@
 # author published — it says nothing about whether they are safe. Treat installing one exactly like
 # running any downloaded executable.
 #
-# To depend on SOMEONE ELSE'S plugin, do not vendor their binary — use `load.requires` with a pinned
-# url + sha256 (see the root manifest.yaml).
+# To depend on SOMEONE ELSE'S plugin, do not vendor their binary — require the Shipment that ships it
+# in `load.requires`, by name or as `{ shipment, version }` (see the root manifest.yaml).
 #
-# Build:  qm build . --out build      (needs qm > v0.10.1)
-format: 1
+# Build:  qm build . --out build      (needs qm v0.15.0 or later)
+format: 2
 shipment:
   name: ship-a-plugin
   version: 1.0.0

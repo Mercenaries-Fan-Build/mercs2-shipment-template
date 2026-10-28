@@ -8,7 +8,7 @@
 # it — .gltf with a base64 `data:` buffer is rejected, so use binary .glb or keep the .bin sidecar.
 #
 # Build:  qm build . --out build
-format: 1
+format: 2
 shipment:
   name: add-new-content
   version: 1.0.0

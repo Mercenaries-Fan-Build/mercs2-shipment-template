@@ -11,7 +11,7 @@
 #
 # `--corpus` is the decompiled game scripts — the base source your text is appended to. Get it from
 # mercs2-workshop-data.zip on the tools release page and point at `workshop_data/lua`.
-format: 1
+format: 2
 shipment:
   name: bundle-lua
   version: 1.0.0
@@ -20,8 +20,8 @@ shipment:
 
 contributions:
   - kind: patch_lua
-    # Only scripts whose composition has actually been reverse-engineered can be merged safely.
-    # `wifpmcinterior` (the wardrobe) is the one on that list today. Any other script still works,
-    # but your Shipment becomes EXCLUSIVE — see ../05-what-the-linter-catches/unmergeable-script.
+    # Any `vz` script takes an append, and appends from many Shipments to one script all survive —
+    # see ../05-two-mods-coexisting. Replacing a script outright is `replace_lua`, which conflicts
+    # with every other Shipment that appends to or replaces the same script.
     target: wifpmcinterior
     append: src/append.lua

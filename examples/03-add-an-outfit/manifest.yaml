@@ -9,7 +9,7 @@
 # the table, and one is permanently unreachable.
 #
 # Build:  qm build . --out build --corpus <corpus>
-format: 1
+format: 2
 shipment:
   name: add-an-outfit
   version: 1.0.0
@@ -28,8 +28,8 @@ contributions:
     # Shown in the wardrobe menu.
     display: Example Outfit
 
-    # chris | jennifer | mattias. Anything else is M0140 — there is no list to append to, so the
-    # outfit would be added to a table nothing reads and simply never appear.
+    # mattias | chris | jen (`jennifer` is accepted too). Anything else is M0140 — there is no list
+    # to append to, so the outfit would be added to a table nothing reads and simply never appear.
     wearer: mattias
 
     # Placeholder cube (see ../02-add-a-model). Replace with a real export.

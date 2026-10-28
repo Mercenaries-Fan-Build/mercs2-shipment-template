@@ -16,7 +16,7 @@
 #
 # This example exists so the difference between `lint` and `build` is concrete: passing the linter
 # means your manifest is well-formed, not that everything in it can be produced.
-format: 1
+format: 2
 shipment:
   name: not-supported-yet
   version: 1.0.0

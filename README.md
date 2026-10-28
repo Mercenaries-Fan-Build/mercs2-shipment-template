@@ -89,7 +89,7 @@ than half-implemented, because a dropped or guessed contribution produces a WAD 
 and does nothing — which the game will never tell you about. Ship a hand-built block through `raw`
 in the meantime.
 
-`raw` and `native_hook` need `qm` v0.10.2 or later; `add_movie` and `place_file` need v0.10.3.
+Every manifest here is `format: 2`, which `qm` reads from v0.15.0 on; an older `qm` refuses it.
 
 ## The part that bites: Lua
 
@@ -101,10 +101,10 @@ So you ship an **append**, not a script, and `qm link` composes every installed 
 onto one base and compiles once. [`examples/05-two-mods-coexisting`](examples/05-two-mods-coexisting)
 demonstrates it.
 
-Only scripts whose composition has been reverse-engineered can merge. For anything else the
-Quartermaster **fails closed**: your Shipment still builds, but it is marked exclusive and refuses to
-co-install with another mod touching that script. Refusing to install is visible and recoverable;
-two mods silently erasing each other is not.
+Any `vz` script takes an append, and every append to one script survives. Replacing a script outright
+(`replace_lua`) cannot compose with anything, so there the Quartermaster **fails closed**: the
+replacement refuses to co-install with another mod appending to or replacing that script. Refusing to
+install is visible and recoverable; two mods silently erasing each other is not.
 
 ## Reading the output
 
@@ -134,7 +134,8 @@ a linter that silently omits its most dangerous checks reads as a clean bill of 
 manifest.yaml     what this Shipment contributes
 src/              your files — textures, models, Lua
 examples/         runnable examples; delete if you don't want them
-build/            qm output; gitignored, never commit it
+build/            qm output from `--out build`; gitignored, never commit it
+_build/           qm output when no `--out` is given; gitignored too
 ```
 
 Every path in the manifest resolves under `src/`. A path escaping the root — via `..` or a symlink —
