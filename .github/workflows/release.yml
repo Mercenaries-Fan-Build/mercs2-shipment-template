@@ -88,7 +88,7 @@ jobs:
           FILES="manifest.yaml src README.md LICENSE"
           [ -d examples ] && FILES="$FILES examples"
           rm -f qm
-          zip -r "$ASSET" $FILES -x 'build/*' '*/build/*'
+          zip -r "$ASSET" $FILES -x 'build/*' '*/build/*' '_build/*' '*/_build/*'
           unzip -l "$ASSET" | grep -q 'manifest.yaml' || { echo "::error::asset is missing manifest.yaml"; exit 1; }
           echo "asset=$ASSET" >> "$GITHUB_OUTPUT"
 
@@ -171,7 +171,7 @@ jobs:
           FILES="manifest.yaml src README.md LICENSE"
           [ -d examples ] && FILES="$FILES examples"
           rm -f qm
-          zip -r "$ASSET" $FILES -x 'build/*' '*/build/*'
+          zip -r "$ASSET" $FILES -x 'build/*' '*/build/*' '_build/*' '*/_build/*'
           unzip -l "$ASSET" | grep -q 'manifest.yaml' || { echo "::error::asset is missing manifest.yaml"; exit 1; }
           echo "asset=$ASSET" >> "$GITHUB_OUTPUT"
 
