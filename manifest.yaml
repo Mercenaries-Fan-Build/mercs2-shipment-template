@@ -9,10 +9,10 @@
 #
 # Every kind is documented in examples/ with a runnable Shipment for each.
 
-format: 1
+format: 2
 
 shipment:
-  # Lowercase, dashes, <= 64 chars. Becomes build/<name>.wad, and is how other Shipments refer to
+  # Lowercase, dashes, <= 64 chars. Becomes _build/<name>.wad, and is how other Shipments refer to
   # yours in `load.requires` / `load.conflicts`.
   name: my-shipment
   version: 0.0.2
@@ -69,18 +69,20 @@ contributions:
     # What the player reads in the wardrobe menu.
     display: Template Outfit
 
-    # chris | jennifer | mattias. Anything else is M0140 — the wardrobe has no list to append to.
+    # mattias | chris | jen (`jennifer` is accepted too). Anything else is M0140 — the wardrobe has
+    # no list to append to.
     wearer: mattias
 
     # Your geometry. src/model.gltf is a placeholder CUBE so this repo builds out of the box —
-    # replace it with a real export. See examples/02-add-new-content/ for the details.
+    # replace it with a real export. See examples/02-add-a-model/ for the details.
     model: src/model.gltf
 
     # The asset whose rig and materials are BORROWED. This is a READ, not a write: many Shipments
     # may borrow the same donor without conflicting.
     #
-    # Required today — donor auto-pick is not implemented, and picking wrong fails quietly rather
-    # than loudly, so the format makes you say it.
+    # Optional for an outfit: leave it out and `qm build` picks the hero's own model
+    # (`pmc_hum_mattias`, `pmc_hum_chris`, `pmc_hum_jen`), and refuses if that model is not in the
+    # game. Name one to borrow a variant host instead.
     donor: pmc_hum_mattias
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -90,11 +92,15 @@ contributions:
 # Most cross-Shipment references are COMPUTED from what you declare above, not written here. This
 # block is only for what the Quartermaster cannot infer.
 #
+# `requires` is also the only thing that orders Shipments: a Shipment you require loads before
+# yours. Everything else keeps the order the Shipments were requested in.
+#
 # load:
-#   after: [some-other-mod]        # ordering hints, for LastWins claims
-#   before: []
-#   conflicts: [an-incompatible-mod]
 #   requires:
-#     - name: some-asi-plugin
-#       url: https://github.com/owner/repo/releases/download/v1.0/plugin.asi
-#       sha256: 0000000000000000000000000000000000000000000000000000000000000000
+#     - some-other-mod                                  # by name, any version
+#     - { shipment: some-library, version: "^1.2.0" }   # by name, within a semver range
+#     - { capability: widescreen }                      # any Shipment that `provides` it
+#   provides: [my-capability]
+#   conflicts:
+#     - an-incompatible-mod
+#     - { shipment: another-mod, version: "<2.0.0" }
