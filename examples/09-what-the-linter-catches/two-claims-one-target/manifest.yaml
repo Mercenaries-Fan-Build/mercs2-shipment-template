@@ -2,7 +2,7 @@
 #
 # One Shipment claiming the same target twice. Whichever contribution lost would vanish without
 # comment, so this is caught before it can.
-format: 1
+format: 2
 shipment: { name: two-claims-one-target, version: 1.0.0, target: retail }
 contributions:
   - kind: replace_texture
