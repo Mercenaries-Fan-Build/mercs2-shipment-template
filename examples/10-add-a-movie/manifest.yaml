@@ -8,10 +8,10 @@
 #
 # Build:  qm build . --out build
 #
-# ⚠ This is the only Data kind that needs no game install: a movie is self-contained — there is no
-# donor to borrow a rig from and no target whose dimensions it must match. So unlike the texture and
-# model examples, this one builds anywhere, including CI.
-format: 1
+# ⚠ A movie is self-contained — there is no donor to borrow a rig from and no target whose
+# dimensions it must match. `qm build` still needs the game, as it does for every Shipment: it opens
+# the game's WADs before it builds anything.
+format: 2
 shipment:
   name: add-a-movie
   version: 1.0.0
