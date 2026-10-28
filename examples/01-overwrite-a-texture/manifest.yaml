@@ -5,7 +5,7 @@
 # one file.
 #
 # Build:  qm build . --out build
-format: 1
+format: 2
 shipment:
   name: overwrite-a-texture
   version: 1.0.0
