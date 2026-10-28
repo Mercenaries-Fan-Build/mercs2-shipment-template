@@ -11,7 +11,7 @@
 # — and `patch_lua` targets the `vz` one. Naming a script from another block (`mrxhq`, say) lints
 # clean and then fails the build with "not in this scripts block", which is a different problem from
 # the one this example is about.
-format: 1
+format: 2
 shipment: { name: unmergeable-script, version: 1.0.0, target: retail }
 contributions:
   - kind: patch_lua
