@@ -6,8 +6,8 @@ One runnable Shipment per capability. Lint any of them with no game install:
 qm lint examples/01-overwrite-a-texture
 ```
 
-CI lints every one on each push, and checks that all seven contribution kinds still have an example —
-so this material cannot quietly drift behind the format.
+CI lints every one on each push, and checks that the nine contribution kinds it lists still have an
+example — so this material cannot quietly drift behind the format.
 
 | | kind | teaches | builds? |
 |---|---|---|---|
@@ -22,8 +22,8 @@ so this material cannot quietly drift behind the format.
 | [10-add-a-movie](10-add-a-movie) | `add_movie` | adding a Scaleform UI movie | yes |
 | [09-what-the-linter-catches](09-what-the-linter-catches) | — | the failures, on purpose | fails lint |
 
-All of these work with the pinned `qm`. `raw` and `native_hook` need v0.10.2 or later; `add_movie`
-and `place_file` need v0.10.3.
+All of these work with the pinned `qm`. Every manifest is `format: 2`, which `qm` reads from v0.15.0
+on; an older `qm` refuses it.
 
 ## The two halves
 
@@ -56,9 +56,9 @@ linked wifpmcinterior: 58828 → 60297 B source, from ["alpha-mod", "beta-mod"]
 
 Both survive, and neither mod knows the other exists.
 
-Ordering is by **Shipment name, not install order**. A saved costume is stored as a *position* in the
-outfit list, so if install order set the indices, reinstalling mods in a different order would
-silently re-dress the player — or leave a saved index pointing at nothing and wedge the load.
+Ordering is by **`load.requires` first, then request order**: a Shipment you require is linked
+before you, and Shipments with no requirement between them keep the order they were given in — the
+order of the directories on the command line above.
 
 ## Where the guard rails are
 
