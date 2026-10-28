@@ -26,8 +26,8 @@
 # you built — for example a state-machine edit, which has no typed kind yet (see
 # ../08-not-supported-yet).
 #
-# Build:  qm build . --out build      (needs qm > v0.10.1)
-format: 1
+# Build:  qm build . --out build      (needs qm v0.15.0 or later)
+format: 2
 shipment:
   name: raw-bytes
   version: 1.0.0
